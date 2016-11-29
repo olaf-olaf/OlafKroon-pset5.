@@ -8,10 +8,24 @@
 
 import UIKit
 
-class DetailViewController: UIViewController {
+class DetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
+    @IBOutlet weak var tableView: UITableView!
+    
+    
     @IBOutlet weak var detailDescriptionLabel: UILabel!
-
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return 1
+    }
+  
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! DetailTableViewCell
+        
+        return cell
+    }
 
     func configureView() {
         // Update the user interface for the detail item.
@@ -32,6 +46,8 @@ class DetailViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    
 
     var detailItem: NSDate? {
         didSet {

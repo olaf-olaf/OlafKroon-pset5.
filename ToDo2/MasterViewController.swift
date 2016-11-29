@@ -11,7 +11,8 @@ import UIKit
 class MasterViewController: UITableViewController {
 
     var detailViewController: DetailViewController? = nil
-    var objects = [Any]()
+    // Dit moet de array worden uit je Manager.
+    var objects = [String]()
 
 
     override func viewDidLoad() {
@@ -38,7 +39,13 @@ class MasterViewController: UITableViewController {
     }
 
     func insertNewObject(_ sender: Any) {
-        objects.insert(NSDate(), at: 0)
+        
+        let alert = UIAlertController(title: "Alert", message: "Message", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+        
+        
+        objects.append("CHECK")
         let indexPath = IndexPath(row: 0, section: 0)
         self.tableView.insertRows(at: [indexPath], with: .automatic)
     }
@@ -70,8 +77,9 @@ class MasterViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 
-        let object = objects[indexPath.row] as! NSDate
-        cell.textLabel!.text = object.description
+        //let object = objects[indexPath.row] as! NSDate
+        // DIT MOET EEN OBJECT OPHALEN UIT DE MANAGER ARRAY
+        cell.textLabel!.text = "MANAGER ARRAY.TXT"
         return cell
     }
 
@@ -88,7 +96,5 @@ class MasterViewController: UITableViewController {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }
     }
-
-
 }
 
