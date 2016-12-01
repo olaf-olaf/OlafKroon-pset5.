@@ -9,21 +9,32 @@
 import UIKit
 
 class DetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-
+    
+    
+    
+    @IBOutlet weak var insertDetail: UITextField!
+    @IBOutlet weak var addDetail: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    
+    var detailObject = ToDoList()
+
+   
     
     
     @IBOutlet weak var detailDescriptionLabel: UILabel!
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // return amount of elements in the toDoItems array of detailobject
         
-        return 1
+        return detailObject.toDoItems.count
     }
   
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+       
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! DetailTableViewCell
-        
+        cell.check.isOn = detailObject.toDoItems[indexPath.row].check
+        cell.showDetail.text = detailObject.toDoItems[indexPath.row].detail
         return cell
     }
 
@@ -54,6 +65,16 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             // Update the view.
             self.configureView()
         }
+    }
+    
+    // If button is pressed, insert textfield into database
+    @IBAction func detailToDataBase(_ sender: Any) {
+        if addDetail.isTouchInside {
+            
+            // Function to insert detail into database
+            try! ToDoManager.sharedInstance.insertDetail(detail: insertDetail.text! , title: detailObject.title)
+        }
+        tableView.reloadData()
     }
 
 

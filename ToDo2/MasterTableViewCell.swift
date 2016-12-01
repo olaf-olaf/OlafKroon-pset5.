@@ -1,21 +1,17 @@
 //
-//  DetailTableViewCell.swift
+//  MasterTableViewCell.swift
 //  ToDo2
 //
-//  Created by Olaf Kroon on 29/11/16.
+//  Created by Olaf Kroon on 30/11/16.
 //  Copyright © 2016 Olaf Kroon. All rights reserved.
 //
 
 import UIKit
 
-class DetailTableViewCell: UITableViewCell {
+class MasterTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var check: UISwitch!
-    @IBOutlet weak var showDetail: UILabel!
-   
-    
+    @IBOutlet weak var title: UILabel!
     override func awakeFromNib() {
-        
         super.awakeFromNib()
         // Initialization code
     }

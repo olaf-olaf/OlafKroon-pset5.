@@ -10,6 +10,9 @@
 		985B2203411A7902F94BCE9F /* Pods_ToDo2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D58B1719275F6DA8EB344A0 /* Pods_ToDo2.framework */; };
 		CEAC52D8041F29F5EF32746B /* Pods_ToDo2UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FA5FB931AC212399FE89B13 /* Pods_ToDo2UITests.framework */; };
 		ED0590891DEDBD9D0028B4D4 /* DetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0590881DEDBD9D0028B4D4 /* DetailTableViewCell.swift */; };
+		ED0A801C1DEEEB170097D08B /* ToDoList.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0A801B1DEEEB170097D08B /* ToDoList.swift */; };
+		ED0A801E1DEEED7D0097D08B /* ToDoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0A801D1DEEED7D0097D08B /* ToDoItem.swift */; };
+		ED0A80201DEEF6180097D08B /* MasterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED0A801F1DEEF6180097D08B /* MasterTableViewCell.swift */; };
 		EDCAC4A31DEC6F510099A4DC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDCAC4A21DEC6F510099A4DC /* AppDelegate.swift */; };
 		EDCAC4A51DEC6F510099A4DC /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDCAC4A41DEC6F510099A4DC /* MasterViewController.swift */; };
 		EDCAC4A71DEC6F510099A4DC /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDCAC4A61DEC6F510099A4DC /* DetailViewController.swift */; };
@@ -51,6 +54,9 @@
 		8A2AD5FD780C066D7EE791EE /* Pods-ToDo2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDo2.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ToDo2/Pods-ToDo2.debug.xcconfig"; sourceTree = "<group>"; };
 		BEC0838F67EED4FE4FF33DEA /* Pods-ToDo2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ToDo2.release.xcconfig"; path = "Pods/Target Support Files/Pods-ToDo2/Pods-ToDo2.release.xcconfig"; sourceTree = "<group>"; };
 		ED0590881DEDBD9D0028B4D4 /* DetailTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailTableViewCell.swift; sourceTree = "<group>"; };
+		ED0A801B1DEEEB170097D08B /* ToDoList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoList.swift; sourceTree = "<group>"; };
+		ED0A801D1DEEED7D0097D08B /* ToDoItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToDoItem.swift; sourceTree = "<group>"; };
+		ED0A801F1DEEF6180097D08B /* MasterTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterTableViewCell.swift; sourceTree = "<group>"; };
 		EDCAC49F1DEC6F510099A4DC /* ToDo2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDo2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDCAC4A21DEC6F510099A4DC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EDCAC4A41DEC6F510099A4DC /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
@@ -156,10 +162,13 @@
 				EDCAC4A21DEC6F510099A4DC /* AppDelegate.swift */,
 				EDCAC54C1DEC73700099A4DC /* DataBaseHelper.swift */,
 				EDCAC54E1DEC73A10099A4DC /* ToDoManager.swift */,
+				ED0A801D1DEEED7D0097D08B /* ToDoItem.swift */,
+				ED0A801B1DEEEB170097D08B /* ToDoList.swift */,
 				EDCAC4A41DEC6F510099A4DC /* MasterViewController.swift */,
 				EDCAC4A61DEC6F510099A4DC /* DetailViewController.swift */,
 				EDCAC4A81DEC6F510099A4DC /* Main.storyboard */,
 				ED0590881DEDBD9D0028B4D4 /* DetailTableViewCell.swift */,
+				ED0A801F1DEEF6180097D08B /* MasterTableViewCell.swift */,
 				EDCAC4AB1DEC6F510099A4DC /* Assets.xcassets */,
 				EDCAC4AD1DEC6F510099A4DC /* LaunchScreen.storyboard */,
 				EDCAC4B01DEC6F510099A4DC /* Info.plist */,
@@ -469,8 +478,11 @@
 				ED0590891DEDBD9D0028B4D4 /* DetailTableViewCell.swift in Sources */,
 				EDCAC54D1DEC73700099A4DC /* DataBaseHelper.swift in Sources */,
 				EDCAC4A71DEC6F510099A4DC /* DetailViewController.swift in Sources */,
+				ED0A801C1DEEEB170097D08B /* ToDoList.swift in Sources */,
+				ED0A80201DEEF6180097D08B /* MasterTableViewCell.swift in Sources */,
 				EDCAC4A51DEC6F510099A4DC /* MasterViewController.swift in Sources */,
 				EDCAC4A31DEC6F510099A4DC /* AppDelegate.swift in Sources */,
+				ED0A801E1DEEED7D0097D08B /* ToDoItem.swift in Sources */,
 				EDCAC54F1DEC73A10099A4DC /* ToDoManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

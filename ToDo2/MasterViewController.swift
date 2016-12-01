@@ -12,7 +12,9 @@ class MasterViewController: UITableViewController {
 
     var detailViewController: DetailViewController? = nil
     // Dit moet de array worden uit je Manager.
-    var objects = [String]()
+    var objects: [String] = []
+    var addListItem = String()
+    //var counter = Int()
 
 
     override func viewDidLoad() {
@@ -26,6 +28,12 @@ class MasterViewController: UITableViewController {
             let controllers = split.viewControllers
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
+        
+        try!    ToDoManager.sharedInstance.read()
+        //ToDoManager.sharedInstance.checkContents()
+        print(ToDoManager.sharedInstance.toDoLists)
+        
+
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -40,46 +48,73 @@ class MasterViewController: UITableViewController {
 
     func insertNewObject(_ sender: Any) {
         
-        let alert = UIAlertController(title: "Alert", message: "Message", preferredStyle: UIAlertControllerStyle.alert)
-        alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.default, handler: nil))
+        let alert = UIAlertController(title: "Enter a to do list.", message: "", preferredStyle: .alert)
+        
+        //2. Add the text field. You can configure it however you need.
+        alert.addTextField { (textField) in
+            textField.text = ""
+        }
+        
+        // 3. Grab the value from the text field, and print it when the user clicks OK.
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            //self.addListItem = textField!.text!
+            //self.objects.append(self.addListItem)
+            //self.counter = self.objects.count
+            try! ToDoManager.sharedInstance.insertList(item: textField!.text!)
+            self.tableView.reloadData()
+    
+            
+        }))
+        
+        // 4. Present the alert.
         self.present(alert, animated: true, completion: nil)
-        
-        
-        objects.append("CHECK")
-        let indexPath = IndexPath(row: 0, section: 0)
-        self.tableView.insertRows(at: [indexPath], with: .automatic)
     }
 
     // MARK: - Segues
+    
+    // SEGUE object that is in the corresponding row array
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
+            // Segue object
             if let indexPath = self.tableView.indexPathForSelectedRow {
-                let object = objects[indexPath.row] as! NSDate
-                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = object
-                controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
-                controller.navigationItem.leftItemsSupplementBackButton = true
+                let object = ToDoManager.sharedInstance.toDoLists[indexPath.row]
+                print("segueing: ",object.title)
+                let DetailViewController = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+                DetailViewController.detailObject = object
             }
         }
     }
+    
+//    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+//        
+//        if(segue.identifier == "yourIdentifierInStoryboard") {
+//            
+//            let yourNextViewController = (segue.destinationViewController as yourNextViewControllerClass)
+//            yourNextViewController.value = yourValue
+    
+
 
     // MARK: - Table View
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
+    //override func numberOfSections(in tableView: UITableView) -> Int {
+       // return 1
+   // }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return objects.count
+        
+        // Return the amount of elements in the toDolists array of the shared instance.
+        print("NUMBERROWS: ", ToDoManager.sharedInstance.toDoLists.count)
+        return ToDoManager.sharedInstance.toDoLists.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-
-        //let object = objects[indexPath.row] as! NSDate
-        // DIT MOET EEN OBJECT OPHALEN UIT DE MANAGER ARRAY
-        cell.textLabel!.text = "MANAGER ARRAY.TXT"
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! MasterTableViewCell
+        
+        // Insert title string of every ToDolist item in the toDolists array into a cell.
+        cell.title.text! = ToDoManager.sharedInstance.toDoLists[indexPath.row].title
+        
         return cell
     }
 
@@ -89,9 +124,11 @@ class MasterViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
         if editingStyle == .delete {
-            objects.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            try! ToDoManager.sharedInstance.deleteList(indexPath: indexPath.row)
+            self.tableView.reloadData()
+            
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }

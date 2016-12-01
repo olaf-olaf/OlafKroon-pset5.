@@ -11,12 +11,12 @@ import SQLite
 
 class DatabaseHelper {
     
-    private let toDoList = Table("list")
+    private let titleList = Table("titlelist")
     private let detailList = Table("detailList")
     private let id = Expression<Int>("id")
-    private let toDo = Expression<String?>("toDo")
-    private let detail = Expression<String?>("detail")
-    private let check = Expression<Bool>("check")
+    private let dataToDo = Expression<String?>("toDo")
+    private let dataDetail = Expression<String?>("detail")
+    private let dataCheck = Expression<Bool>("check")
     
     private var db: Connection?
     
@@ -45,12 +45,12 @@ class DatabaseHelper {
         
         do {
             // Create a table for lists
-            try db!.run(toDoList.create(ifNotExists: true) {
+            try db!.run(titleList.create(ifNotExists: true) {
                 
                 t in
                 
                 t.column(id, primaryKey: .autoincrement)
-                t.column(toDo)
+                t.column(dataToDo)
                 
             })
             
@@ -60,9 +60,9 @@ class DatabaseHelper {
                 t in
                 
                 t.column(id, primaryKey: .autoincrement)
-                t.column(detail)
-                t.column(check)
-                t.column(toDo)
+                t.column(dataDetail)
+                t.column(dataCheck)
+                t.column(dataToDo)
                 
             })
         } catch{
@@ -75,11 +75,19 @@ class DatabaseHelper {
     
     // Insert a element into the List table.
     func createList(toDo: String) throws {
-        let insertToDo = toDoList.insert(self.toDo <- toDo)
+        let listItem = ToDoList()
+        let insertToDo = titleList.insert(self.dataToDo <- toDo)
         
         do {
-            let rowId = try db!.run(insertToDo)
-            print("ROWID: ", rowId)
+            
+            // Insert data into database.
+            _ = try db!.run(insertToDo)
+            print("insertion: ", toDo)
+            
+            // Update objects.
+            listItem.title = toDo
+            print("INSERTTEXT",listItem.title.copy())
+            ToDoManager.sharedInstance.toDoLists.append(listItem)
         } catch {
             throw error
         }
@@ -88,19 +96,29 @@ class DatabaseHelper {
     
     // Insert a element into the Detail table.
     func createDetail(detail: String, title: String) throws {
-        let insertDetail = detailList.insert(self.detail <- detail)
-        let insertTitle = detailList.insert(self.toDo <- title)
+        let item = ToDoItem()
+        let insertData = detailList.insert(self.dataDetail <- detail,self.dataToDo <- title, self.dataCheck <- false)
+       
         
         do {
-            // GEBEURT DIT IN DEZELFDE RIJ?
-            let rowId = try db!.run(insertDetail)
-            let rowIdTwo = try db!.run(insertTitle)
-            print (rowId)
-            print(rowIdTwo)
+            // Insert data into the Database
+            _ = try db!.run(insertData)
+            
+            //Update objects
+            item.check = false
+            item.title = title
+            item.detail = detail
+            
+            for element in ToDoManager.sharedInstance.toDoLists{
+                if element.title == title {
+                    element.toDoItems.append(item)
+                }
+            }
         } catch {
             throw error
         }
-        
+    }
+    
        
        
     // READ FUNCTIONS
@@ -112,9 +130,9 @@ class DatabaseHelper {
         
         do {
             
-            for row in try db!.prepare(toDoList) {
+            for row in try db!.prepare(titleList) {
                 if count == index {
-                    result = row[toDo]
+                    result = row[dataToDo]
                 }
                 count = count + 1
             }
@@ -125,13 +143,47 @@ class DatabaseHelper {
         return result
     }
         
-    // Return a id from toDolist
+    
+    // Read the entire database
+    func read() throws {
+        do {
+            
+            for row in try db!.prepare(titleList) {
+                // initialise ToDoList object
+                let listItem = ToDoList()
+                
+                // for every row in titleList listitem.title is toDoList.
+                listItem.title = row[dataToDo]!
+                
+                for rowSecond in try db!.prepare(detailList) {
+                    let toDoItem = ToDoItem()
+                    
+                    // If a row in detaillist has a dataToDo that corresponds with listitem.title
+                    // update all values and add a copy to listitem.toDoItemsa array.
+                    if listItem.title == rowSecond[dataToDo] {
+                        toDoItem.title = rowSecond[dataToDo]!
+                        toDoItem.check = rowSecond[dataCheck]
+                        toDoItem.detail = rowSecond[dataDetail]!
+                        listItem.toDoItems.append(toDoItem)
+                    }
+                }
+                // append listitemen to the array in ToDoManager
+                ToDoManager.sharedInstance.toDoLists.append(listItem)
+            }
+            
+        } catch {
+            throw error
+        }
+            
+    }
+        
+    // Return a id from titleList
     func readlistId(index: Int) throws -> Int? {
         var result: Int?
         var count = 0
             
         do {
-            for row in try db!.prepare(toDoList) {
+            for row in try db!.prepare(titleList) {
                 if count == index {
                     result = row[id]
                 }
@@ -147,45 +199,62 @@ class DatabaseHelper {
         
     // DELETE FUNCTIONS
     
-    // Delete a row where id = rowid.
+    // Delete a list row where id = rowid.
+    // ALLE CORRESPONDERENDE DETAILS MOETEN OOK WORDEN VERWIJDERD
     func deleteList(index: Int) throws {
         var rowId = Int()
+        var rowTitle = String()
         
         var count = 0
        
         do{
-            for checkId in try db!.prepare(toDoList) {
+            for checkId in try db!.prepare(titleList) {
                 if count == index {
                     rowId = checkId[id]
+                    rowTitle = checkId[dataToDo]!
                 }
                 count = count + 1
             }
             // Delete the list
-            let locationList = toDoList.filter(id == rowId)
-//            let locationDetail = detailList.filter(detailId == rowId)
+            let locationTitleList = titleList.filter(id == rowId)
+            let locationDetailList = detailList.filter(dataToDo == rowTitle)
+
+            // Delete items from both tables in database
+            try db!.run(locationTitleList.delete())
+            try db!.run(locationDetailList.delete())
             
-            try db!.run(locationList.delete())
-            //try db!.run(locationDetail.delete())
+            // Delete objects from TodoManager.toDoLists
+            //titles.remove(at: indexPath.row)
+            ToDoManager.sharedInstance.toDoLists.remove(at: index)
             
         } catch {
             
             throw error
         }
-        
+    }
+    
     // delete detail where id = rowid
-    func deleteDetail(index: Int) throws {
-        var count = 0
-        rowId = Int()
-        do{
-            for checkId in try db!.prepare(detailList) {
-                if count == index {
-                    rowId = checkId[id]
-                }
-                count = count + 1
+    func deleteDetail(index: Int, title: String) throws {
+    var count = 0
+    var rowId = Int()
+        
+    do {
+        for checkId in try db!.prepare(detailList) {
+            if count == index {
+                rowId = checkId[id]
             }
-            // Delete the list
-            let locationList = detailList.filter(id == rowId)
-            try db!.run(locationList.delete())
+            count = count + 1
+        }
+        // Delete the row from database
+        let locationList = detailList.filter(id == rowId)
+        try db!.run(locationList.delete())
+            
+        // Delete object from array
+        for element in ToDoManager.sharedInstance.toDoLists{
+            if element.title == title {
+                element.toDoItems.remove(at: index)
+            }
+        }
         } catch {
             throw error
         }
@@ -196,30 +265,30 @@ class DatabaseHelper {
     // AMOUNT OF ROWS FUNCTIONS
     
     // Get the amount of rows in list table
-    func amountOfListRows() throws -> Int? {
-        var count = Int()
-        do {
-            for _ in try db!.prepare(toDoList) {
-                count = count + 1
-            }
-        } catch {
-            throw error
-        }
-        return count
-    }
+//    func amountOfListRows() throws -> Int? {
+//        var count = Int()
+//        do {
+//            for _ in try db!.prepare(titleList) {
+//                count = count + 1
+//            }
+//        } catch {
+//            throw error
+//        }
+//        return count
+//    }
+//    
+//    // Get the amount of rows in detail table
+//    func amountOfDetailRows() throws -> Int? {
+//        var count = Int()
+//        do {
+//            for _ in try db!.prepare(detailList) {
+//                count = count + 1
+//            }
+//        } catch {
+//            throw error
+//        }
+//        return count
+//    }
+
     
-    // Get the amount of rows in detail table
-    func amountOfDetailRows() throws -> Int? {
-        var count = Int()
-        do {
-            for _ in try db!.prepare(detailList) {
-                count = count + 1
-            }
-        } catch {
-            throw error
-        }
-        return count
-    }
-}
-    
-}
+

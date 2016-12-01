@@ -10,16 +10,74 @@ import Foundation
 
 class ToDoManager {
     
+    private let db = DatabaseHelper()
+    
     static let sharedInstance = ToDoManager()
     
     // An array of toDolist objects
-    var toDoLists = [Any]()
+    var toDoLists = [ToDoList]()
     
     private init(){
         
     }
     
-    //Functie die read
+    //Check contents
+    func checkContents() {
+        for item in toDoLists {
+            print("item",item.title)
+        }
+    }
     
-    //Functie die write
+    //Functie die read
+    func read() throws {
+        do {
+            try db!.read()
+        } catch {
+            throw error
+        }
+    }
+    
+    
+    
+    
+    //Functies die write
+    
+    //create tableList
+    func insertList(item: String) throws {
+        do {
+            try db!.createList(toDo: item)
+        } catch {
+            throw error
+        }
+    }
+    
+    //create tableDetail
+    func insertDetail(detail: String, title: String) throws {
+        
+        do {
+            try db!.createDetail(detail: detail, title: title)
+            
+        } catch {
+            throw error
+        }
+        
+    }
+    
+    //delete tableList
+    func deleteList(indexPath: Int) throws {
+        do {
+            try db!.deleteList(index: indexPath)
+        } catch {
+            throw error
+        }
+    }
+    
+    //delete tabledetail
+    func deleteDetail(indexPath: Int, title: String) throws {
+        do {
+            try db!.deleteDetail(index: indexPath, title: title)
+        } catch {
+            throw error
+        }
+    }
 }
