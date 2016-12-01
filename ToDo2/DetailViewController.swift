@@ -37,6 +37,22 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         cell.showDetail.text = detailObject.toDoItems[indexPath.row].detail
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool
+    {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
+    {
+        if editingStyle == .delete
+        {
+            try! ToDoManager.sharedInstance.deleteDetail(indexPath: indexPath.row, title: detailObject.title)
+            self.tableView.reloadData()
+        }
+    }
+    
+
 
     func configureView() {
         // Update the user interface for the detail item.
@@ -79,4 +95,18 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
 
 
 }
+
+
+//    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+//        return true
+//    }
+//
+//    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: IndexPath) {
+//        if editingStyle == UITableViewCellEditingStyle.delete {
+//            try! ToDoManager.sharedInstance.deleteDetail(indexPath: indexPath.row, title: detailObject.title)
+//            //tableView.reloadData()
+//
+//            //tableView.deleteRows(at: [indexPath as IndexPath], with: UITableViewRowAnimation.automatic)
+//        }
+//    }
 
