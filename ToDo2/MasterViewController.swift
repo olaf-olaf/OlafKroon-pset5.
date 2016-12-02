@@ -61,7 +61,13 @@ class MasterViewController: UITableViewController {
             //self.addListItem = textField!.text!
             //self.objects.append(self.addListItem)
             //self.counter = self.objects.count
-            try! ToDoManager.sharedInstance.insertList(item: textField!.text!)
+            if try! ToDoManager.sharedInstance.insertList(item: textField!.text!) == false {
+                print("FALSE")
+                let alert = UIAlertController(title: "You already have that list", message: "", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+
+            }
             self.tableView.reloadData()
     
             

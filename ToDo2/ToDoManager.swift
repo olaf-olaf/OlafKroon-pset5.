@@ -43,12 +43,15 @@ class ToDoManager {
     //Functies die write
     
     //create tableList
-    func insertList(item: String) throws {
+    func insertList(item: String) throws -> Bool {
         do {
-            try db!.createList(toDo: item)
+            if try db!.createList(toDo: item) == false {
+                return false
+            }
         } catch {
             throw error
         }
+        return true
     }
     
     //create tableDetail
@@ -76,6 +79,15 @@ class ToDoManager {
     func deleteDetail(indexPath: Int, title: String) throws {
         do {
             try db!.deleteDetail(index: indexPath, title: title)
+        } catch {
+            throw error
+        }
+    }
+    
+    // Update switches
+    func updateCheckSwitch(detail: String, currentState: Bool) throws {
+        do {
+            try db!.updateCheck(detail: detail, currentState: currentState)
         } catch {
             throw error
         }

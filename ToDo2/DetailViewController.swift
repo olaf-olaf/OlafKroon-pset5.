@@ -35,6 +35,9 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! DetailTableViewCell
         cell.check.isOn = detailObject.toDoItems[indexPath.row].check
         cell.showDetail.text = detailObject.toDoItems[indexPath.row].detail
+        
+
+        
         return cell
     }
     
@@ -50,7 +53,9 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             try! ToDoManager.sharedInstance.deleteDetail(indexPath: indexPath.row, title: detailObject.title)
             self.tableView.reloadData()
         }
+        
     }
+    
     
 
 
@@ -92,21 +97,40 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         }
         tableView.reloadData()
     }
+    
+    
+    // When the user quits the app encode state.
+    override func encodeRestorableState(with coder: NSCoder) {
+        
+        if let toDoItem = insertDetail.text {
+            coder.encode(toDoItem, forKey: "toDoItem")
+        }
+        
+        super.encodeRestorableState(with: coder)
+    }
+    
+    // When the user opens the app. Decode state.
+    override func decodeRestorableState(with coder: NSCoder) {
+        
+        if let toDoItem = coder.decodeObject(forKey: "toDoItem") as? String {
+            print (toDoItem)
+            insertDetail.text = toDoItem
+        }
+        
+        super.decodeRestorableState(with: coder)
+        
+    }
+}
 
-
+// Restore view.
+extension DetailViewController: UIViewControllerRestoration {
+    static func viewController(withRestorationIdentifierPath identifierComponents: [Any],
+                               coder: NSCoder) -> UIViewController? {
+        let vc = DetailViewController()
+        return vc
+    }
 }
 
 
-//    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-//        return true
-//    }
-//
-//    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: IndexPath) {
-//        if editingStyle == UITableViewCellEditingStyle.delete {
-//            try! ToDoManager.sharedInstance.deleteDetail(indexPath: indexPath.row, title: detailObject.title)
-//            //tableView.reloadData()
-//
-//            //tableView.deleteRows(at: [indexPath as IndexPath], with: UITableViewRowAnimation.automatic)
-//        }
-//    }
+
 

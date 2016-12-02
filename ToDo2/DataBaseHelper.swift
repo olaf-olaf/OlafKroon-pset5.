@@ -50,7 +50,7 @@ class DatabaseHelper {
                 t in
                 
                 t.column(id, primaryKey: .autoincrement)
-                t.column(dataToDo)
+                t.column(dataToDo, unique: true)
                 
             })
             
@@ -74,22 +74,37 @@ class DatabaseHelper {
     // INSERT FUNCTIONS
     
     // Insert a element into the List table.
-    func createList(toDo: String) throws {
+    func createList(toDo: String) throws -> Bool {
         let listItem = ToDoList()
         let insertToDo = titleList.insert(self.dataToDo <- toDo)
+        var unique = true
         
-        do {
+        // If title is in table do not add a duplicate
+            for row in try db!.prepare(titleList) {
+                if row[dataToDo] == toDo {
+                    unique = false
+                }
+            }
+        
+        if unique == false {
+            return false
+        } else {
+        
+        
+            do {
             
-            // Insert data into database.
-            _ = try db!.run(insertToDo)
-            print("insertion: ", toDo)
+                // Insert data into database.
+                _ = try db!.run(insertToDo)
+                print("insertion: ", toDo)
             
-            // Update objects.
-            listItem.title = toDo
-            print("INSERTTEXT",listItem.title.copy())
-            ToDoManager.sharedInstance.toDoLists.append(listItem)
-        } catch {
-            throw error
+                // Update objects.
+                listItem.title = toDo
+                print("INSERTTEXT",listItem.title.copy())
+                ToDoManager.sharedInstance.toDoLists.append(listItem)
+            } catch {
+                throw error
+            }
+            return true
         }
     }
     
@@ -119,29 +134,10 @@ class DatabaseHelper {
         }
     }
     
+   
        
        
     // READ FUNCTIONS
-        
-    // Return a toDo with an id that corresponds to the tablerow
-    func readList(index: Int) throws -> String? {
-        var result: String?
-        var count = 0
-        
-        do {
-            
-            for row in try db!.prepare(titleList) {
-                if count == index {
-                    result = row[dataToDo]
-                }
-                count = count + 1
-            }
-            
-        } catch {
-            throw error
-        }
-        return result
-    }
         
     
     // Read the entire database
@@ -177,23 +173,6 @@ class DatabaseHelper {
             
     }
         
-    // Return a id from titleList
-    func readlistId(index: Int) throws -> Int? {
-        var result: Int?
-        var count = 0
-            
-        do {
-            for row in try db!.prepare(titleList) {
-                if count == index {
-                    result = row[id]
-                }
-                count = count + 1
-            }
-        } catch {
-            throw error
-        }
-        return result
-        }
     
     // Return all the details that correspond with toDo
         
@@ -258,37 +237,77 @@ class DatabaseHelper {
         } catch {
             throw error
         }
+    }
+    
+    // ALS DIT NIET WERKT NOG EEN EXTRA FOR LOOP OM MIDDELS TITLE DE JUISTE TODOLIST TE VINDEN IN DE SHARED INSTANCE.
+    
+    func updateCheck(detail: String, currentState: Bool) throws {
+        var title = String()
+        print("IN FUNCTION", currentState)
+        
+        do {
+            // get the title
+            for row in try db!.prepare(detailList) {
+                if row[dataDetail] == detail {
+                    title = row[dataToDo]!
+                    print("TITLE: ", title)
+                }
+            }
+        // Update objects
+            if currentState == false {
+                print ("IN IF FALSE")
+                for object in ToDoManager.sharedInstance.toDoLists{
+                    if object.title == title {
+                        print("FOUND OBJECT")
+                        for secondObject in object.toDoItems {
+                            if secondObject.check == true && secondObject.detail == detail && secondObject.title == title {
+                                print ("UPDATING OBJECT")
+                                // UPDATE CHECK
+                                secondObject.check = false
+                                print("CHECK",secondObject.check)
+                            }
+                        }
+                    }
+                }
+            // Updata database
+            let updater = detailList.filter(dataDetail == detail && dataToDo == title)
+                 try db!.run(updater.update(dataCheck <- false))
+                print ("UPDATE")
+                
+            }
+            if currentState == true {
+                print("IN IF TRUE")
+                
+                // Update objects
+                for object in ToDoManager.sharedInstance.toDoLists{
+                    if object.title == title {
+                        print("FOUND OBJECT")
+                        for secondObject in object.toDoItems {
+                            if secondObject.check == false && secondObject.detail == detail && secondObject.title == title {
+                                print ("UPDATING OBJECT")
+                                // UPDATE CHECK
+                                secondObject.check = true
+                                print("CHECK",secondObject.check)
+                            }
+                        }
+                    }
+                }
+                // Updata database
+                let updater = detailList.filter(dataDetail == detail && dataToDo == title)
+                try db!.run(updater.update(dataCheck <- true))
+                print ("UPDATE")
+
+            }
+        
+        } catch {
+            throw error
         }
     }
-        
-        
-    // AMOUNT OF ROWS FUNCTIONS
     
-    // Get the amount of rows in list table
-//    func amountOfListRows() throws -> Int? {
-//        var count = Int()
-//        do {
-//            for _ in try db!.prepare(titleList) {
-//                count = count + 1
-//            }
-//        } catch {
-//            throw error
-//        }
-//        return count
-//    }
-//    
-//    // Get the amount of rows in detail table
-//    func amountOfDetailRows() throws -> Int? {
-//        var count = Int()
-//        do {
-//            for _ in try db!.prepare(detailList) {
-//                count = count + 1
-//            }
-//        } catch {
-//            throw error
-//        }
-//        return count
-//    }
+}
+        
+        
+
 
     
 
