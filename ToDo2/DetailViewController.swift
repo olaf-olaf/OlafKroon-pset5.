@@ -88,13 +88,22 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     
     // If button is pressed, insert textfield into database
     @IBAction func detailToDataBase(_ sender: Any) {
-        if addDetail.isTouchInside {
+        if insertDetail.text != "" {
+        
+            if addDetail.isTouchInside {
             
             // Function to insert detail into database
-            try! ToDoManager.sharedInstance.insertDetail(detail: insertDetail.text! , title: ToDoManager.sharedInstance.toDoLists[listIndex].title)
+                try! ToDoManager.sharedInstance.insertDetail(detail: insertDetail.text! , title: ToDoManager.sharedInstance.toDoLists[listIndex].title)
+            }
+            insertDetail.text = ""
+            tableView.reloadData()
+        } else {
+            print("INVALID INPUT")
+            let alert = UIAlertController(title: "Enter something to do!", message: "", preferredStyle: UIAlertControllerStyle.alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+
         }
-        insertDetail.text = ""
-        tableView.reloadData()
     }
     
     

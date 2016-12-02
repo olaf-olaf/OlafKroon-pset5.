@@ -13,7 +13,6 @@ class ToDoList: NSCopying {
     var title = String()
     var toDoItems = [ToDoItem]()
     
-    
     init(){
         
     }
