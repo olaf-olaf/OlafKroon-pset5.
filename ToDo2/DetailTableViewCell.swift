@@ -13,9 +13,6 @@ class DetailTableViewCell: UITableViewCell {
     @IBOutlet weak var check: UISwitch!
     @IBOutlet weak var showDetail: UILabel!
     
-    //var tapped: ((cell) -> Void)?
-   
-    
     override func awakeFromNib() {
         
         super.awakeFromNib()
@@ -28,13 +25,9 @@ class DetailTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    // If a switched is pressed update data in sharedInstance and database.
     @IBAction func checkOff(_ sender: Any) {
-        
-       // tapped?(self)
-        
-        
         if check.isEnabled{
-        print("BEFOREFUNC", check.isOn)
         try! ToDoManager.sharedInstance.updateCheckSwitch(detail: showDetail.text!, currentState: check.isOn)
         DetailTableViewCell.load()
         }

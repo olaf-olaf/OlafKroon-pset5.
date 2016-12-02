@@ -11,17 +11,14 @@ import UIKit
 class MasterViewController: UITableViewController {
 
     var detailViewController: DetailViewController? = nil
-    // Dit moet de array worden uit je Manager.
     var objects: [String] = []
     var addListItem = String()
-    //var counter = Int()
-
-
+ 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        // Create a add button with a '+' sign.
         self.navigationItem.leftBarButtonItem = self.editButtonItem
-
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
         self.navigationItem.rightBarButtonItem = addButton
         if let split = self.splitViewController {
@@ -29,8 +26,8 @@ class MasterViewController: UITableViewController {
             self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
         
+        // Get all data from database.
         try!    ToDoManager.sharedInstance.read()
-        //ToDoManager.sharedInstance.checkContents()
         print(ToDoManager.sharedInstance.toDoLists)
         
 
@@ -59,8 +56,11 @@ class MasterViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
            
+            // Updata database and objects
             if try! ToDoManager.sharedInstance.insertList(item: textField!.text!) == false {
                 print("FALSE")
+                
+                // Check for a duplicate list title.
                 let alert = UIAlertController(title: "You already have that list", message: "", preferredStyle: UIAlertControllerStyle.alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default, handler: nil))
                 self.present(alert, animated: true, completion: nil)
@@ -78,13 +78,15 @@ class MasterViewController: UITableViewController {
     // MARK: - Segues
     
     // SEGUE object that is in the corresponding row array
-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-            // Segue object
+            
             if let indexPath = self.tableView.indexPathForSelectedRow {
+                
                 let object = ToDoManager.sharedInstance.toDoLists[indexPath.row]
-                print("segueing: ",object.title)
+                //let object = indexPath.row
+                //print("segueing: ",object.title)
+                print("CHECKALTERNATIVE: ", ToDoManager.sharedInstance.toDoLists[indexPath.row].title)
                 let DetailViewController = (segue.destination as! UINavigationController).topViewController as! DetailViewController
                 DetailViewController.detailObject = object
             }
@@ -95,14 +97,9 @@ class MasterViewController: UITableViewController {
 
     // MARK: - Table View
 
-    //override func numberOfSections(in tableView: UITableView) -> Int {
-       // return 1
-   // }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         // Return the amount of elements in the toDolists array of the shared instance.
-        print("NUMBERROWS: ", ToDoManager.sharedInstance.toDoLists.count)
         return ToDoManager.sharedInstance.toDoLists.count
     }
 
@@ -115,8 +112,8 @@ class MasterViewController: UITableViewController {
         return cell
     }
 
+    // Make cells editable.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
         return true
     }
 
@@ -131,12 +128,9 @@ class MasterViewController: UITableViewController {
         }
     }
     
+    
     // When the user quits the app encode state.
     override func encodeRestorableState(with coder: NSCoder) {
-        
-//        if let toDoItem = textField.text {
-//            coder.encode(toDoItem, forKey: "toDoItem")
-//        }
         
         super.encodeRestorableState(with: coder)
     }
@@ -144,11 +138,6 @@ class MasterViewController: UITableViewController {
     // When the user opens the app. Decode state.
     override func decodeRestorableState(with coder: NSCoder) {
         
-//        if let toDoItem = coder.decodeObject(forKey: "toDoItem") as? String {
-//            print (toDoItem)
-//            textField.text = toDoItem
-//        }
-//        
         super.decodeRestorableState(with: coder)
         
         

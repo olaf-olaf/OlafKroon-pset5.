@@ -44,7 +44,7 @@ class DatabaseHelper {
     private func createTable() throws {
         
         do {
-            // Create a table for lists
+            // Create a table for lists.
             try db!.run(titleList.create(ifNotExists: true) {
                 
                 t in
@@ -54,7 +54,7 @@ class DatabaseHelper {
                 
             })
             
-            // create a table for details
+            // Create a table for details.
             try db!.run(detailList.create(ifNotExists: true) {
                 
                 t in
@@ -71,7 +71,6 @@ class DatabaseHelper {
     }
     
     
-    // INSERT FUNCTIONS
     
     // Insert a element into the List table.
     func createList(toDo: String) throws -> Bool {
@@ -89,8 +88,7 @@ class DatabaseHelper {
         if unique == false {
             return false
         } else {
-        
-        
+            
             do {
             
                 // Insert data into database.
@@ -135,11 +133,6 @@ class DatabaseHelper {
     }
     
    
-       
-       
-    // READ FUNCTIONS
-        
-    
     // Read the entire database
     func read() throws {
         do {
@@ -174,12 +167,10 @@ class DatabaseHelper {
     }
         
     
-    // Return all the details that correspond with toDo
         
     // DELETE FUNCTIONS
     
     // Delete a list row where id = rowid.
-    // ALLE CORRESPONDERENDE DETAILS MOETEN OOK WORDEN VERWIJDERD
     func deleteList(index: Int) throws {
         var rowId = Int()
         var rowTitle = String()
@@ -203,7 +194,6 @@ class DatabaseHelper {
             try db!.run(locationDetailList.delete())
             
             // Delete objects from TodoManager.toDoLists
-            //titles.remove(at: indexPath.row)
             ToDoManager.sharedInstance.toDoLists.remove(at: index)
             
         } catch {
@@ -239,7 +229,6 @@ class DatabaseHelper {
         }
     }
     
-    // ALS DIT NIET WERKT NOG EEN EXTRA FOR LOOP OM MIDDELS TITLE DE JUISTE TODOLIST TE VINDEN IN DE SHARED INSTANCE.
     
     func updateCheck(detail: String, currentState: Bool) throws {
         var title = String()
@@ -262,7 +251,6 @@ class DatabaseHelper {
                         for secondObject in object.toDoItems {
                             if secondObject.check == true && secondObject.detail == detail && secondObject.title == title {
                                 print ("UPDATING OBJECT")
-                                // UPDATE CHECK
                                 secondObject.check = false
                                 print("CHECK",secondObject.check)
                             }
@@ -285,7 +273,6 @@ class DatabaseHelper {
                         for secondObject in object.toDoItems {
                             if secondObject.check == false && secondObject.detail == detail && secondObject.title == title {
                                 print ("UPDATING OBJECT")
-                                // UPDATE CHECK
                                 secondObject.check = true
                                 print("CHECK",secondObject.check)
                             }
