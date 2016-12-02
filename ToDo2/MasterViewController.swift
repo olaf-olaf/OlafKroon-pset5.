@@ -58,9 +58,7 @@ class MasterViewController: UITableViewController {
         // 3. Grab the value from the text field, and print it when the user clicks OK.
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            //self.addListItem = textField!.text!
-            //self.objects.append(self.addListItem)
-            //self.counter = self.objects.count
+           
             if try! ToDoManager.sharedInstance.insertList(item: textField!.text!) == false {
                 print("FALSE")
                 let alert = UIAlertController(title: "You already have that list", message: "", preferredStyle: UIAlertControllerStyle.alert)
@@ -92,13 +90,6 @@ class MasterViewController: UITableViewController {
             }
         }
     }
-    
-//    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-//        
-//        if(segue.identifier == "yourIdentifierInStoryboard") {
-//            
-//            let yourNextViewController = (segue.destinationViewController as yourNextViewControllerClass)
-//            yourNextViewController.value = yourValue
     
 
 
@@ -139,5 +130,37 @@ class MasterViewController: UITableViewController {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }
     }
+    
+    // When the user quits the app encode state.
+    override func encodeRestorableState(with coder: NSCoder) {
+        
+//        if let toDoItem = textField.text {
+//            coder.encode(toDoItem, forKey: "toDoItem")
+//        }
+        
+        super.encodeRestorableState(with: coder)
+    }
+    
+    // When the user opens the app. Decode state.
+    override func decodeRestorableState(with coder: NSCoder) {
+        
+//        if let toDoItem = coder.decodeObject(forKey: "toDoItem") as? String {
+//            print (toDoItem)
+//            textField.text = toDoItem
+//        }
+//        
+        super.decodeRestorableState(with: coder)
+        
+        
+    }
+
 }
+extension MasterViewController: UIViewControllerRestoration {
+    static func viewController(withRestorationIdentifierPath identifierComponents: [Any],
+                               coder: NSCoder) -> UIViewController? {
+        let vc = MasterViewController()
+        return vc
+    }
+}
+
 
