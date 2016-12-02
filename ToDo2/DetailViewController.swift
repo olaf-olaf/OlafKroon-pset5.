@@ -18,19 +18,21 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     @IBOutlet weak var detailDescriptionLabel: UILabel!
     
     // Store segued data.
-    var detailObject = ToDoList()
+    //var detailObject = ToDoList()
+    var listIndex = Int()
+    
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // return amount of elements in the toDoItems array of detailobject
         
-        return detailObject.toDoItems.count
+        return ToDoManager.sharedInstance.toDoLists[listIndex].toDoItems.count
     }
   
     // Show data for every item in the toDoItems array of detailObject. MAYBE REPLACE DETAILOBJECT WITH INDEX.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! DetailTableViewCell
-        cell.check.isOn = detailObject.toDoItems[indexPath.row].check
-        cell.showDetail.text = detailObject.toDoItems[indexPath.row].detail
+        cell.check.isOn = ToDoManager.sharedInstance.toDoLists[listIndex].toDoItems[indexPath.row].check
+        cell.showDetail.text = ToDoManager.sharedInstance.toDoLists[listIndex].toDoItems[indexPath.row].detail
         
         return cell
     }
@@ -46,7 +48,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     {
         if editingStyle == .delete
         {
-            try! ToDoManager.sharedInstance.deleteDetail(indexPath: indexPath.row, title: detailObject.title)
+            try! ToDoManager.sharedInstance.deleteDetail(indexPath: indexPath.row, title: ToDoManager.sharedInstance.toDoLists[listIndex].title)
             self.tableView.reloadData()
         }
         
@@ -89,8 +91,9 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         if addDetail.isTouchInside {
             
             // Function to insert detail into database
-            try! ToDoManager.sharedInstance.insertDetail(detail: insertDetail.text! , title: detailObject.title)
+            try! ToDoManager.sharedInstance.insertDetail(detail: insertDetail.text! , title: ToDoManager.sharedInstance.toDoLists[listIndex].title)
         }
+        insertDetail.text = ""
         tableView.reloadData()
     }
     

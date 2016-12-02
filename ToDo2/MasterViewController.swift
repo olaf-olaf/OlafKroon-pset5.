@@ -83,12 +83,12 @@ class MasterViewController: UITableViewController {
             
             if let indexPath = self.tableView.indexPathForSelectedRow {
                 
-                let object = ToDoManager.sharedInstance.toDoLists[indexPath.row]
-                //let object = indexPath.row
+                //let object = ToDoManager.sharedInstance.toDoLists[indexPath.row]
+                let object = indexPath.row
                 //print("segueing: ",object.title)
                 print("CHECKALTERNATIVE: ", ToDoManager.sharedInstance.toDoLists[indexPath.row].title)
                 let DetailViewController = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                DetailViewController.detailObject = object
+                DetailViewController.listIndex = object
             }
         }
     }
